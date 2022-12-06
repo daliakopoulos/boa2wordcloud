@@ -1,0 +1,71 @@
+---
+pdf_document: default
+author: "Ioannis Daliakopoulos"
+date: "December, 2022"
+always_allow_html: true
+output:
+  pdf_document: default
+title: "Book of Abstracts Wordcloud"
+fig_caption: yes
+---
+
+```{r}
+#| label: libraries
+#| include: true  
+#| echo: false
+#| cache: false
+#| warning: false
+
+# install.packages("wordcloud")
+library(wordcloud)
+# install.packages("RColorBrewer")
+library(RColorBrewer)
+# install.packages("wordcloud2")
+library(wordcloud2)
+# install.packages("pdftools")
+library(pdftools)
+# install.packages("quanteda")
+library(quanteda)
+
+```
+
+```{r}
+#| label: process
+#| include: true  
+#| echo: false
+#| cache: false
+#| warning: false
+
+
+pdf.file <- "https://retaste.gr/pdf/RETASTE_BOA_2022.pdf"
+download.file(pdf.file, destfile = "boa.pdf", mode = "wb")
+
+text <- pdf_text("boa.pdf")
+
+corp <- quanteda::corpus(text)
+
+toks <- quanteda::tokens(corp, 
+                         remove_punct = TRUE,
+                         remove_symbols = TRUE,
+                         remove_numbers = TRUE,
+                         remove_url = TRUE,
+                         remove_separators = TRUE)
+
+omit <- read.delim("omit.txt", header = F, sep = "\n")
+
+
+toks <- tokens_remove(toks, c(stopwords("english"), omit))
+
+
+
+wordcloud(toks,min.freq = 2, 
+          scale=c(7,0.5),
+          colors=brewer.pal(8, "Dark2"),  
+          random.color= TRUE, 
+          random.order = FALSE, 
+          max.words = 50)
+
+
+
+
+```
