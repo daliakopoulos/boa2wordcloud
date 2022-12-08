@@ -54,8 +54,11 @@ toks <- quanteda::tokens(corp,
 omit <- read.delim("omit.txt", header = F, sep = "\n")
 
 
-toks <- tokens_remove(toks, c(stopwords("english"), omit))
-
+toks <- quanteda::tokens_remove(toks, stopwords("english"))
+toks <- quanteda::tokens_remove(toks, omit$V1)
+toks <- quanteda::tokens_remove(toks, "???")
+toks <- quanteda::tokens_remove(toks, "??")
+toks <- quanteda::tokens_remove(toks, "?")
 
 
 wordcloud(toks,min.freq = 2, 
